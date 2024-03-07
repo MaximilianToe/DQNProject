@@ -15,8 +15,8 @@ class randomPlayer():
 #defines a class that representats a player that makes decisions based on alpha-beta pruning
 class alphaBetaPlayer:
     
-    def __init__(self, deepth):
-        self.deepth = deepth
+    def __init__(self, depth):
+        self.deepth = depth
 
     def play(self,board):
         return board.step(alphaBeta(board, self.deepth))
