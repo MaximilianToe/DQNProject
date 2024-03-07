@@ -2,8 +2,17 @@
 The goal of this repository is to show some projects I have been working on in my free time. 
 Currently, I am implementing a DQN to play Connect Four. 
 This is done using the PyTorch library, and the code is based on https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html.
+
+# The environment
 We begin by creating an environment that allows us to play Connect Four in Python.
-This is done by defining a class that incorporates the game logic. 
+This game is played by two players against each other on a $6 \times 7$, vertically mounted grid. 
+Each player has game tokens of a chosen colour which are inserted at the top of the board such that they fall to the free space in the grid. 
+The player who first manages to build a row of four neighboring (horizontally, vertically, or diagonally) tokens wins the game. 
+
+To play this game in Python, we define a class that allows us to represent the board and allows us to take turns according to the game logic.
+The board is represented by a $6 \times 7$ matrix with $0$ on every empty field, $1$ for the tokens of player $1$, and $-1$ for the tokens of player $2$. 
+The board admits a play() and check_win() method that allows us to make moves and check whether the win condition for any player is satisfied.
+For ease of notation during the training, we combine these into a single method called step(). 
 
 # The idea behind the DQN
 Before we begin to explain our implementation of a DQN, let us briefly recall the ideas. 
@@ -27,6 +36,7 @@ The failure of this equation to hold is known as the temporal difference error w
 $$ \delta = Q^{\mathrm{DQN}}(s,a) -(r + \gamma \, \mathrm{max}_{a'}(Q^{\mathrm{DQN}}(s',a')))$$
 
 For a given loss function $\mathcal{L}$ and a batch of observed transitions $B$ that contain tuples $(s,a,s',r)$, we want to minimize 
+
 $$\mathcal{L} = 1/ \vert B \vert \sum_{B}\mathcal{L}(\delta).$$
 
 # The implementation
@@ -34,7 +44,11 @@ Now that we have explained the idea behind the network, let us discuss its imple
 We implement a separate network for each Player such that each network will only play on odd/even turns. 
 Furthermore, to improve stability, we will use two networks of the same depth and size for each player, called policy_net and target_net. 
 During each optimization step, we will start by sampling a batch $B$ of a specified size and calculate the temporal difference error for every element as
-$$\mathrm{policy}_{\mathrm{net}}(s) -(r+\gamma max_{a'}( \mathrm{target}_{\mathrm{net}}(s', a')))$$
+
+$$
+\mathrm{policy}_{\mathrm{net}}(s) -(r+\gamma \mathrm{max}_{a'}( \mathrm{target}_{\mathrm{net}}(s', a')))
+$$
+
 and optimize the parameters of policy_net such that our chosen loss function becomes minimal. 
 Then we will update the parameters of target_net as a convex combination of the newly optimized parameters of $\mathrm{policy}_{\mathrm{net}}$ and the old parameters of $\mathrm{target}_\mathrm{net}$.
 After initializing the networks and implementing the optimization procedure, we let both networks play against each other in a training loop. 

@@ -1,7 +1,7 @@
 import numpy as np 
 
 
-class board_state(object):
+class ConnectFour:
 
     def __init__(self):
         b = []

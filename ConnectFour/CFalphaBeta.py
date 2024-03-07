@@ -45,15 +45,16 @@ def alphaBeta(board, depth):
         for action in board.not_full():
             new_board = copy.deepcopy(board) 
             new_board.play(action)
-            new_value = max(v, min_player(new_board,depth-1, -math.inf, math.inf))
-            if new_value==v:
+            next_value =  min_player(new_board,depth-1, -math.inf, math.inf)
+            if next_value==v:
+            #if action has the same value we also save it
                 best_action.append(action)
-            if new_value >v:
+            if next_value >v:
                 best_action = []
-                v = new_value
+                v = next_value
                 best_action.append(action)  
-            chosen_index = random.choice(best_action)
-        return board.not_full[chosen_index] 
+        #selects random action from all actions with the same value
+        return random.choice(best_action)
     
     if board.whos_turn ==-1:
         v = math.inf
@@ -61,15 +62,16 @@ def alphaBeta(board, depth):
         for action in board.not_full():
             new_board = copy.deepcopy(board)
             new_board.play(action)
-            new_value = min(v , max_player(new_board,depth -1, -math.inf, math.inf))
-            if new_value==v:
+            next_value =  max_player(new_board,depth -1, -math.inf, math.inf)
+            if next_value==v:
+                #if action has the same value we also save it
                 best_action.append(action)
-            if new_value<v:
+            if next_value<v:
                 best_action= []
-                v = new_value
-                best_action = action
-            chosen_index = random.choice(best_action)
-        return board.not_full()[chosen_index] 
+                v = next_value
+                best_action.append(action)
+        #selects random action from all actions with the same value
+        return random.choice(best_action)
 
 
 
