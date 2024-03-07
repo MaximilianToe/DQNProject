@@ -5,15 +5,18 @@ This is done using the PyTorch library, and the code is based on https://pytorch
 We begin by creating an environment that allows us to play Connect Four in Python.
 This is done by defining a class that incorporates the game logic. 
 
+#The idea behind the DQN
 Before we begin to explain our implementation of a DQN, let us briefly recall the ideas. 
 The goal is to maximize our long-term return.
 This is built up as a sum of short-term rewards, that we obtain after each turn, multiplied by a 'discount' between 0 and 1 which makes rewards in the far future more uncertain. 
-![](ReadMeImages/return.jpg)
-ADD IMAGE OF SUM
-In an ideal world we could wish for a function 
-![](ReadMeImages/Qfunction.jpg)
+
+![](ReadMeImages/return.png)
+In an ideal world, we could wish for a function 
+
+![](ReadMeImages/Qfunction.png)
+
 that would tell us our return for each pair of state and action, such that for each state we could simply pick the action that maximizes this function.
-Unfortunately, this is not the case. 
+Unfortunately, our world is not perfect and we do not have such a function. 
 However, this is where neutral networks as universal function approximators come into play. 
 So the idea is to train a neural network to resemble this desired function Q.
 Using Bellman's principle of optimality, we can express the return at time t as a combination of the short-term reward for a given action, together with the (discounted) return of the remaining decision problem that results from the chosen action.
@@ -21,11 +24,13 @@ Hence Q should satisfy
 Q(s,a) = r + \gamma Q(s',argmax a')
 If our neural network Q approximates the unknown Q function, we should expect that it also satisfies this equation, and this is what we are trying to archive during our optimization steps. 
 The failure of this equation to hold is known as the temporal difference error which we denote by \delta.
-EQUATION FOR TEMPORAL ERROR
+
+![](ReadMeImages/temporalError.png)
 
 For a given loss function \mathcal{L} and a batch of observed transitions $B$ that contain tuples (s,a,s',r), we want to minimize 
 \mathcal{L} = 1/ \vert B \vert \sum_{B}\mathcal{L}(\delta)
 
+#The implementation
 Now that we have explained the idea behind the network, let us discuss its implementation.
 We implement a separate network for each Player such that each network will only play on odd/even turns. 
 Furthermore, to improve stability, we will use two networks of the same depth and size for each player, called policy_net and target_net. 
@@ -41,7 +46,7 @@ For each player, we will collect tuples (s,a,s',r) where
 -s' is the next state where the SAME player can choose an action again. For example, player 1 sees a state s and selects an action a. Then, we let player 2 also play their turn. The resulting state after player 2's move will be s'.
 -r is the reward that is obtained after both players have selected an action.
 
-CURRENT STATE
+#CURRENT STATE
 To test the performance of the trained network, we let it play against a randomly acting player. 
 In this scenario, our trained player consistently outperforms the untrained player, both as player 1 and player 2. 
 
