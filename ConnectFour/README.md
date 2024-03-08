@@ -50,7 +50,7 @@ $$\frac{1}{\vert B \vert} \sum_{B}\mathcal{L}(\delta).$$
 # The implementation
 Now that we have explained the idea behind the network, let us discuss its implementation.
 We build a separate network for each Player such that each network will only play on odd/even turns. 
-Furthermore, to improve stability, we will use two networks of the same depth and size for each player, called $policy$ and $target$. 
+Furthermore, to improve stability, we will use two networks of the same depth and size for each player, called $\mathrm{policy}$ and $\mathrm{target}$. 
 We start by letting our networks choose actions in alternating order if a certain threshold is satisfied, otherwise, we play random.
 If one player wins, the board is reset and we start with a new game.
 After each full turn, we save the observed data.
@@ -66,9 +66,9 @@ During each optimization step, we will start by sampling a batch $B$ of a specif
 
 $$\mathrm{policy}(s) -(r+\gamma \mathrm{max}_{a'}( \mathrm{target}(s', a'))).$$
 
-Then, we optimize the parameters of $policy$ such that our chosen loss function becomes minimal. 
-Once that is done, we will update the parameters of $target$ as a convex combination of the newly optimized parameters of $policy$ and the old parameters of $target$.
-We will only update the parameters of $target$ in small steps to ensure stability. 
+Then, we optimize the parameters of $\mathrm{policy}$ such that our chosen loss function becomes minimal. 
+Once that is done, we will update the parameters of $\mathrm{target}$ as a convex combination of the newly optimized parameters of $\mathrm{policy}$ and the old parameters of $\mathrm{target}$.
+We will only update the parameters of $\mathrm{target}$ in small steps to ensure stability. 
 This loop is iterated after a certain amount of episodes is reached.
 
 # Summary of the current state 
