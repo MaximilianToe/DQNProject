@@ -83,14 +83,14 @@ Next, we compared the trained player against classical alpha-beta pruning of var
 The win percentage and runtime compared to alpha-beta pruning of depth 1 to 3 over a series of 1000 games are shown below
 (The code was run on an 1,4 GHz Intel Core i5-8257U).
 
-![](ReadMeImages/winsRuntime.png)
+![](ConnectFour/ReadMeImages/winsRuntime.png)
 
 We see that the DQN slightly outperforms alpha-beta pruning with depth 1 in win percentage and has the upper hand in runtime. 
 For higher depths, the DQN player begins to lose out on win percentage but has a significant advantage in terms of runtime.
 
 When directly testing our trained player against the alpha-beta player, we obtain the following diagram.
 
-![](ReadMeImages/winsDepth.png)
+![](ConnectFour/ReadMeImages/winsDepth.png)
 
 The diagram shows that with increasing depth, the win rate of the player using alpha-beta pruning increases.
 However, when both players have comparable time to make their decision (at depth one), we see that the DQN-trained player has the advantage.
