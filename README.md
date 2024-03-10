@@ -13,7 +13,7 @@ The player who first manages to build a row of four neighboring (horizontally, v
 To play this game in Python, we define a class 'ConnectFour' that allows us to represent the board and allows us to take turns according to the game logic.
 The board is represented by a $6 \times 7$ matrix with $0$ on every empty field, $1$ for the tokens of player $1$, and $-1$ for the tokens of player $2$. 
 Among others, the board admits a 'play' and 'check_win' method that allows us to make moves and check whether the win condition for any player is satisfied.
-For ease of notation during the training, we combine these into a single method called step(). 
+For ease of notation during the training, we combine these into a single method called 'step()'. 
 
 # The idea behind the DQN
 Before we begin to explain our implementation of a DQN, let us briefly recall the ideas. 
