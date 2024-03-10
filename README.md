@@ -1,8 +1,7 @@
 # DQN Projects
-The goal of this repository is to show a project related to neural networks and deep learning. 
-The project shown here is implementing a DQN to play Connect Four. 
+The project shown here implements a Deep Q-Network (DQN) to play Connect Four. 
 This is classically done with tree-based search algorithms such as alpha-beta pruning.
-However, we want to explore to what extent a DQN can archive the same task and compare the results.
+Here, we investigate to what extent a DQN can achieve the same task, or do better, and compare the results.
 The code is based on the PyTorch library as shown in https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html.
 
 # The environment
@@ -11,9 +10,9 @@ This game is played by two players against each other on a $6 \times 7$, vertica
 Each player has game tokens of a chosen colour which are inserted at the top of the board such that they fall to the free space in the grid. 
 The player who first manages to build a row of four neighboring (horizontally, vertically, or diagonally) tokens wins the game. 
 
-To play this game in Python, we define a class that allows us to represent the board and allows us to take turns according to the game logic.
+To play this game in Python, we define a class 'ConnectFour' that allows us to represent the board and allows us to take turns according to the game logic.
 The board is represented by a $6 \times 7$ matrix with $0$ on every empty field, $1$ for the tokens of player $1$, and $-1$ for the tokens of player $2$. 
-Among others, the board admits a play() and check_win() method that allows us to make moves and check whether the win condition for any player is satisfied.
+Among others, the board admits a 'play' and 'check_win' method that allows us to make moves and check whether the win condition for any player is satisfied.
 For ease of notation during the training, we combine these into a single method called step(). 
 
 # The idea behind the DQN
@@ -31,14 +30,14 @@ $$Q: \lbrace \mathrm{ states } \rbrace \times \lbrace \mathrm{ actions } \rbrace
 
 that would tell us our return for each pair of state and action, such that for each state we could simply pick the action that maximizes this function.
 Unfortunately, our world is not perfect and we do not have such a function. 
-However, this is where neutral networks as universal function approximators come into play. 
+However, this is where neural networks as universal function approximators come into play. 
 The idea is to train a neural network $Q^{\mathrm{DQN}}$ to approximate the function $Q$.
 Using Bellman's principle of optimality, we can express the return at time $t$ as a combination of the short-term reward for a given action, together with the (discounted) return of the remaining decision problem that results from the chosen action.
 Hence $Q$ should satisfy 
 
 $$Q(s, a) = r + \gamma  \cdot \mathrm{max}_{a'}(Q(s', a'))$$
 
-If our neural network $Q^{\mathrm{DQN}}$ approximates the unknown $Q$ function, we should expect that it also satisfies this equation, at least up to a very small error, and this is what we are trying to achieve during our optimization steps. 
+If our neural network $Q^{\mathrm{DQN}}$ approximates the unknown $Q$ function, we should expect that it also satisfies this equation, at least up to a very small error. This is what we are trying to achieve during our optimization step. 
 The failure of this equation to hold is known as the temporal difference error which we denote by $\delta$.
 
 $$ \delta = Q^{\mathrm{DQN}}(s,a) -(r + \gamma \cdot \mathrm{max}_{a'}(Q^{\mathrm{DQN}}(s',a')))$$
@@ -48,8 +47,7 @@ For a given loss function $\mathcal{L}$ and a batch of observed transitions $B$ 
 $$\frac{1}{\vert B \vert} \sum_{B}\mathcal{L}(\delta).$$
 
 # The implementation
-Now that we have explained the idea behind the network, let us discuss its implementation.
-We build a separate network for each Player such that each network will only play on odd/even turns. 
+We build a separate network for each Player such that each network only plays on odd/even turns. 
 Furthermore, to improve stability, we will use two networks of the same depth and size for each player, called $\mathrm{policy}$ and $\mathrm{target}$. 
 We start by letting our networks choose actions in alternating order if a certain threshold is satisfied, otherwise, we play random.
 If one player wins, the board is reset and we start with a new game.
@@ -81,7 +79,7 @@ In this scenario, our trained player has a consistently high win rate against th
 
 Next, we compared the trained player against classical alpha-beta pruning of varying depths we measured both win percentage and runtime. 
 The win percentage and runtime compared to alpha-beta pruning of depth 1 to 3 over a series of 1000 games are shown below
-(The code was run on an 1,4 GHz Intel Core i5-8257U).
+(The code was run on an 1.4 GHz Intel Core i5-8257U).
 
 ![](ConnectFour/ReadMeImages/winsRuntime.png)
 
@@ -92,5 +90,8 @@ When directly testing our trained player against the alpha-beta player, we obtai
 
 ![](ConnectFour/ReadMeImages/winsDepth.png)
 
-The diagram shows that with increasing depth, the win rate of the player using alpha-beta pruning increases.
-However, when both players have comparable time to make their decision (at depth one), we see that the DQN-trained player has the advantage.
+When both players have comparable time to make their decision (at depth 1), we see that the DQN-trained player has the advantage.
+However, the diagram shows that with increasing depth, the win rate of the player using alpha-beta pruning increases.
+Even though the computation time needed increases significantly to achieve this, this difference in win rate seems far from optimal and should be subject to further investigation. 
+One possible reason for this difference might be the suboptimal convergence of the loss during training. This could be a result of a combination of the non-deterministic nature of the future state resulting from an action, and constant updating of both models, which could influence computational stability.
+
