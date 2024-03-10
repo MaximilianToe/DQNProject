@@ -1,4 +1,4 @@
-# DQN Projects
+# DQN Project
 The project shown here implements a Deep Q-Network (DQN) to play Connect Four. 
 This is classically done with tree-based search algorithms such as alpha-beta pruning.
 Here, we investigate to what extent a DQN can achieve the same task, or do better, and compare the results.
